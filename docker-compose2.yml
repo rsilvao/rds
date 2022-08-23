@@ -1,0 +1,16 @@
+version: '3.1'
+
+services:
+
+
+  portal:
+    image: nginx
+    container_name: Portal
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - VIRTUAL_HOST=maestriaudl.dyndns-free.com
+    volumes:
+      - /storage/nginx/portal:/usr/share/nginx/html:ro
