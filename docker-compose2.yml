@@ -13,4 +13,4 @@ services:
     environment:
       - VIRTUAL_HOST=maestriaudl.dyndns-free.com
     volumes:
-      - /storage/nginx/portal:/usr/share/nginx/html:ro
+      - /volumes/www/portal:/usr/share/nginx/html:ro
