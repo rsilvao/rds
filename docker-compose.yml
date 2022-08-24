@@ -1,8 +1,8 @@
 version: '3.1'
-
+# Servicios
 services:
 
-reverse-proxy:
+  reverse-proxy:
     image: nginxproxy/nginx-proxy:alpine
     container_name: Reverse-Proxy
     restart: always
@@ -18,7 +18,7 @@ reverse-proxy:
       - /volumes/nginx/html:/usr/share/nginx/html:rw
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
-lets-encrypt:
+  lets-encrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
     container_name: 'Lets-Encrypt'
     restart: always
@@ -32,7 +32,7 @@ lets-encrypt:
       - /volumes/nginx/html:/usr/share/nginx/html:rw
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
-portal:
+  portal:
     image: nginx
     restart: always
     environment:
@@ -44,7 +44,7 @@ portal:
     volumes:
       - /volumes/www/portal:/usr/share/nginx/html:ro
 
-factura:
+  factura:
     image: nginx
     restart: always
     environment:
@@ -56,7 +56,7 @@ factura:
     volumes:
       - /volumes/www/factura:/usr/share/nginx/html:ro
 
-erp:
+  erp:
     image: httpd
     restart: always
     environment:
