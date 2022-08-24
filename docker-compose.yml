@@ -2,30 +2,68 @@ version: '3.1'
 
 services:
 
-  reverse-proxy:
-    image: jwilder/nginx-proxy:alpine
+reverse-proxy:
+    image: nginxproxy/nginx-proxy:alpine
     container_name: Reverse-Proxy
     restart: always
     ports:
       - 80:80
       - 443:443
+    environment:
+      - LETSENCRYPT_HOST=practica2rso.dynathome.net
+      - LETSENCRYPT_EMAIL=r.silva.ojeda@gmail.com
     volumes:
+      - /volumes/nginx/certs:/etc/nginx/certs:ro
+      - /volumes/nginx/vhostd:/etc/nginx/vhost.d
+      - /volumes/nginx/html:/usr/share/nginx/html:rw
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
-  portal:
-    image: nginx
-    container_name: Portal
+      ets-encrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: 'Lets-Encrypt'
     restart: always
     environment:
-      - VIRTUAL_HOST=portal.midomino.com
+      - NGINX_PROXY_CONTAINER=Reverse-Proxy
+      - VIRTUAL_HOST=practica2rso.dynathome.net
+      - VIRTUAL_PATH=/.well-known
     volumes:
-      - /storage/nginx/portal:/usr/share/nginx/html:ro
+      - /volumes/nginx/certs:/etc/nginx/certs
+      - /volumes/nginx/vhostd:/etc/nginx/vhost.d
+      - /volumes/nginx/html:/usr/share/nginx/html:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+      portal:
+    image: nginx
+    restart: always
+    environment:
+      - VIRTUAL_HOST=practica2rso.dynathome.net
+      - VIRTUAL_PATH=/
+      - VIRTUAL_DEST=/
+      - LETSENCRYPT_HOST=apps-antonio.ddns.net
+      - LETSENCRYPT_EMAIL=r.silva.ojeda@gmail.com
+    volumes:
+      - /volumes/www/portal:/usr/share/nginx/html:ro
+
+  factura:
+    image: nginx
+    restart: always
+    environment:
+      - VIRTUAL_HOST=practica2rso.dynathome.net
+      - VIRTUAL_PATH=/facturas
+      - VIRTUAL_DEST=/
+      - LETSENCRYPT_HOST=practica2rso.dynathome.net
+      - LETSENCRYPT_EMAIL=r.silva.ojeda@gmail.com
+    volumes:
+      - /volumes/www/factura:/usr/share/nginx/html:ro
 
   erp:
     image: httpd
-    container_name: ERP
     restart: always
     environment:
-      - VIRTUAL_HOST=erp.midomino.com
+      - VIRTUAL_HOST=practica2rso.dynathome.net
+      - VIRTUAL_PATH=/erp
+      - VIRTUAL_DEST=/
+      - LETSENCRYPT_HOST=practica2rso.dynathome.net
+      - LETSENCRYPT_EMAIL=r.silva.ojeda@gmail.com
     volumes:
-      - /storage/apache/erp:/usr/local/apache2/htdocs
+      - /volumes/www/erp:/usr/local/apache2/htdocs
